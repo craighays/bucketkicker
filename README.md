@@ -2,6 +2,8 @@
 
  #### bucketkicker is a tool to quickly enumerate AWS S3 buckets verify whether or not they exist and to look for loot. It's similar to a subdomain bruteforcer but is made specifically for S3 buckets and also has some extra features that allow you to grep for delicious files as well as download interesting files if you're not afraid to quickly fill up your hard drive.
 
+ [Further reading](https://medium.com/bugbountyhunting/bug-bounty-hunting-tips-3-kicking-s3-buckets-84c231939066)
+
  This is a hard fork based on the original by [jordanpotti](https://github.com/jordanpotti/AWSBucketDump) with some changes specifically around efficient listing of buckets based on found/not found/access denied HTTP responses
  #### [@CraigHays](https://twitter.com/craighays)
 
