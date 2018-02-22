@@ -1,0 +1,12 @@
+testbucket
+bucket
+imcraighays
+zabbix
+production-config
+settings
+fitbit
+archive
+archive1
+archive01
+archive-old
+com.companyname
