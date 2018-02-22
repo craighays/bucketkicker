@@ -1,7 +1,9 @@
-# AWSBucketDump
+# bucketkicker
 
- #### AWSBucketDump is a tool to quickly enumerate AWS S3 buckets to look for loot. It's similar to a subdomain bruteforcer but is made specifically for S3 buckets and also has some extra features that allow you to grep for delicious files as well as download interesting files if you're not afraid to quickly fill up your hard drive.
- #### [@ok_bye_now](https://twitter.com/ok_bye_now)
+ #### bucketkicker is a tool to quickly enumerate AWS S3 buckets verify whether or not they exist and to look for loot. It's similar to a subdomain bruteforcer but is made specifically for S3 buckets and also has some extra features that allow you to grep for delicious files as well as download interesting files if you're not afraid to quickly fill up your hard drive.
+
+ This is a hard fork based on the original by [jordanpotti](https://github.com/jordanpotti/AWSBucketDump) with some changes specifically around efficient listing of buckets based on found/not found/access denied HTTP responses
+ #### [@CraigHays](https://twitter.com/craighays)
 
 ## Pre-Requisites
 Non-Standard Python Libraries:
@@ -20,13 +22,13 @@ pip install -r requirements.txt
 
 ## General
 
-This is a tool that enumerates Amazon S3 buckets and looks for interesting files. 
+This is a tool that enumerates Amazon S3 buckets to confirm whether or not they exist, are open to the webm and can also look for interesting files. 
 
-I have example wordlists but I haven't put much time into refining them. 
+I have included a wordlist generater which I will improve to add more rules as time goes by. 
 
-https://github.com/danielmiessler/SecLists will have all the word lists you need. If you are targeting a specific company, you will likely want to use jhaddix's enumall tool which leverages recon-ng and Alt-DNS. 
+https://github.com/danielmiessler/SecLists will have all the word lists you need. If you are targeting a specific company, you will likely want to use massdns to ennumerate a list of DNS subdomains to feed into this. 
 
-https://github.com/jhaddix/domain && https://github.com/infosec-au/altdns
+Original wording around grepping stuff from [jordanpotti](https://github.com/jordanpotti/AWSBucketDump)
 
 As far as word lists for grepping interesting files, that is completely up to you. The one I provided has some basics and yes, those word lists are based on files that I personally have found with this tool.
 
@@ -38,9 +40,10 @@ After building this tool, I did find an [interesting article](https://community.
 
 ## Usage:
 
-    usage: AWSBucketDump.py [-h] [-D] [-t THREADS] -l HOSTLIST [-g GREPWORDS] [-m MAXSIZE]
+    usage: bucketkicker.py [-h] [-D] [-t THREADS] -l HOSTLIST [-g GREPWORDS] [-m MAXSIZE]
 
     optional arguments:
+      -b            Write list of open buckets to openbuckets.txt only - don't look at contents - fastest way to ennumerate buckets
       -h, --help    show this help message and exit
       -D            Download files. This requires significant diskspace
       -d            If set to 1 or True, create directories for each host w/ results
@@ -48,11 +51,10 @@ After building this tool, I did find an [interesting article](https://community.
       -l HOSTLIST
       -g GREPWORDS  Provide a wordlist to grep for
       -m MAXSIZE    Maximum file size to download.
-      -b            Write list of open buckets to openbuckets.txt only - don't look at contents.
   
-     python3 AWSBucketDump.py -d False -l <wordlistfile> -g grepfile.txt -b
+     python3 bucketkicker.py -d False -l <wordlistfile> -g grepfile.txt -b
 
-## Generating wordlists
+## Generating random wordlists via crunch
 
 ```kali > crunch <min> <max> -f charset s3 -o <output filename>```
 
@@ -60,12 +62,6 @@ stripping out invalid line starts and ends
 
 sed '/^\./ d' <filename> | sed "/\.$/d" | sed '/^-/ d' | sed "/-$/d"
 
-## Patterns in responses
-```<Error><Code>NoSuchBucket</Code><Message>The specified bucket does not exist</Message>
-<Error><Code>InvalidBucketName</Code><Message>The specified bucket is not valid.</Message>
-<Error><Code>AccessDenied</Code><Message>Access Denied</Message>
-<Error><Code>AllAccessDisabled</Code><Message>All access to this object has been disabled</Message>
-```
 
 ## Naming rules
 S3 URLs use the format http://bucketname.s3.amazonaws.com . If we replace bucketname with random strings that meet the following rules it is possible to see if buckets exist. Feed this tool with a wordlist of your choice and you're good to go.
